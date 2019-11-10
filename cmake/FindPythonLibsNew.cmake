@@ -163,6 +163,15 @@ if(CMAKE_HOST_WIN32)
             message(FATAL_ERROR "Python libraries not found")
         endif()
     endif()
+    SET(PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIR}")
+    SET(PYTHON_LIBRARIES "${PYTHON_LIBRARY}")
+    SET(PYTHON_DEBUG_LIBRARIES "${PYTHON_DEBUG_LIBRARY}")
+
+    find_package_message(PYTHON
+        "Found PythonLibs: ${PYTHON_LIBRARY}"
+        "${PYTHON_EXECUTABLE}${PYTHON_VERSION}")
+
+    set(PYTHONLIBS_FOUND TRUE)
 
 else()
     if(PYTHON_MULTIARCH)
@@ -182,6 +191,17 @@ else()
     if(NOT PYTHON_LIBRARY)
         set(PYTHON_LIBRARY python${PYTHON_LIBRARY_SUFFIX})
     endif()
+
+    SET(PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIR}")
+    SET(PYTHON_LIBRARIES "${PYTHON_LIBRARY}")
+    SET(PYTHON_DEBUG_LIBRARIES "${PYTHON_DEBUG_LIBRARY}")
+
+    find_package_message(PYTHON
+        "Found PythonLibs: ${PYTHON_LIBRARY}"
+        "${PYTHON_EXECUTABLE}${PYTHON_VERSION}")
+
+    set(PYTHONLIBS_FOUND TRUE)
+
 endif()
 
 MARK_AS_ADVANCED(
@@ -189,16 +209,3 @@ MARK_AS_ADVANCED(
   PYTHON_INCLUDE_DIR
 )
 
-# We use PYTHON_INCLUDE_DIR, PYTHON_LIBRARY and PYTHON_DEBUG_LIBRARY for the
-# cache entries because they are meant to specify the location of a single
-# library. We now set the variables listed by the documentation for this
-# module.
-SET(PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIR}")
-SET(PYTHON_LIBRARIES "${PYTHON_LIBRARY}")
-SET(PYTHON_DEBUG_LIBRARIES "${PYTHON_DEBUG_LIBRARY}")
-
-find_package_message(PYTHON
-    "Found PythonLibs: ${PYTHON_LIBRARY}"
-    "${PYTHON_EXECUTABLE}${PYTHON_VERSION}")
-
-set(PYTHONLIBS_FOUND TRUE)
