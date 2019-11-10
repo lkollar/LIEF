@@ -142,24 +142,26 @@ string(REGEX REPLACE "\\\\" "/" PYTHON_INCLUDE_DIR ${PYTHON_INCLUDE_DIR})
 string(REGEX REPLACE "\\\\" "/" PYTHON_SITE_PACKAGES ${PYTHON_SITE_PACKAGES})
 
 if(CMAKE_HOST_WIN32)
-    if("${PYTHON_LIBRARY}" EQUAL "disabled")
-        return()
-    endif()
+    if(NOT PYTHON_LIBRARY)
+        message(WARNING, "Not linking with libpython")
+    else()
+        message(WARNING, "Linking with libpython")
 
-    set(PYTHON_LIBRARY
-        "${PYTHON_PREFIX}/libs/Python${PYTHON_LIBRARY_SUFFIX}.lib")
-
-    # when run in a venv, PYTHON_PREFIX points to it. But the libraries remain in the
-    # original python installation. They may be found relative to PYTHON_INCLUDE_DIR.
-    if(NOT EXISTS "${PYTHON_LIBRARY}")
-        get_filename_component(_PYTHON_ROOT ${PYTHON_INCLUDE_DIR} DIRECTORY)
         set(PYTHON_LIBRARY
-            "${_PYTHON_ROOT}/libs/Python${PYTHON_LIBRARY_SUFFIX}.lib")
-    endif()
+            "${PYTHON_PREFIX}/libs/Python${PYTHON_LIBRARY_SUFFIX}.lib")
 
-    # raise an error if the python libs are still not found.
-    if(NOT EXISTS "${PYTHON_LIBRARY}")
-        message(FATAL_ERROR "Python libraries not found")
+        # when run in a venv, PYTHON_PREFIX points to it. But the libraries remain in the
+        # original python installation. They may be found relative to PYTHON_INCLUDE_DIR.
+        if(NOT EXISTS "${PYTHON_LIBRARY}")
+            get_filename_component(_PYTHON_ROOT ${PYTHON_INCLUDE_DIR} DIRECTORY)
+            set(PYTHON_LIBRARY
+                "${_PYTHON_ROOT}/libs/Python${PYTHON_LIBRARY_SUFFIX}.lib")
+        endif()
+
+        # raise an error if the python libs are still not found.
+        if(NOT EXISTS "${PYTHON_LIBRARY}")
+            message(FATAL_ERROR "Python libraries not found")
+        endif()
     endif()
 
 else()
